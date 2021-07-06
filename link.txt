@@ -1,0 +1,1 @@
+http://assd-traffic-service-progetto2.router.default.svc.cluster.local
