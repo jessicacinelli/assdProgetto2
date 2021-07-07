@@ -13,7 +13,6 @@ public class Intersection
 	
 	public Intersection() {}
 	
-	
 	public Intersection(int osmid, Coordinate coordinate)
 	{
 		this.osmid = osmid;
@@ -40,5 +39,19 @@ public class Intersection
 		this.streets = streets;
 	}
 	
-	
+	/* Questa funzione calcola la distanza tra due punti 
+	in linea retta date le coordinate in
+	latitudine e longitudine */
+	public double disgeo (Coordinate a, Coordinate b)
+	{
+	     double x = 0;
+	     double y = 0;
+	     double dist = 0;
+	     
+	     x = (b.getLatitude() - a.getLatitude());
+	     y = (b.getLongitude() - a.getLongitude());
+	     
+	     dist = Math.sqrt((x*x) - (y*y));
+	     return dist;	     
+	}
 }
