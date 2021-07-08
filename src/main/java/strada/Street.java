@@ -1,10 +1,16 @@
 package strada;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import gps.Coordinate;
 
-public class Street 
+
+@XmlRootElement
+
+public class Street implements Serializable
 {
 	private int linkid; 
 	private int fromPoint;
@@ -15,7 +21,7 @@ public class Street
 	private String name;
 	private double weight; //average travel time [s]  //tempo finale - tempo iniziale 
 	
-	private double ffs; // free flow speed [Km/h] (Velocità media, dipendente dal traffico)
+	private double ffs; // free flow speed [Km/h] (Velocitï¿½ media, dipendente dal traffico)
 
 	private ArrayList<Coordinate> c;
 
@@ -32,6 +38,19 @@ public class Street
 		this.weight = weight;
 		this.ffs = ffs;
 		this.c = new ArrayList<Coordinate>();
+	}
+
+	public Street(int linkid, int fromPoint, int toPoint, double length, int speedlimit, String name, double weight, double ffs, ArrayList<Coordinate> c) 
+	{
+		this.linkid = linkid;
+		this.fromPoint = fromPoint;
+		this.toPoint = toPoint;
+		this.length = length;
+		this.speedlimit = speedlimit;
+		this.name = name;
+		this.weight = weight;
+		this.ffs = ffs;
+		this.c = c;
 	}
 
 	public int getLinkid() {
@@ -112,6 +131,14 @@ public class Street
 		return dist;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "Street [linkid=" + linkid + ", fromPoint=" + fromPoint + ", toPoint=" + toPoint + ", length=" + length
+				+ ", speedlimit=" + speedlimit + ", name=" + name + ", weight=" + weight + ", ffs=" + ffs + ", c=" + c
+				+ "]";
+	}
+
 	public Coordinate newPoint(double distance, double metripercorsi, Coordinate a, Coordinate b)
 	{
 		//distance -> lunghezza del link

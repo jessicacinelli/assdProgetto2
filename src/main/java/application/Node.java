@@ -1,6 +1,4 @@
-package controller;
-
-
+package application;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +14,7 @@ public class Node {
 
 	private String id;
 	private Coordinate coordinates;
-
+	
 	public Node() {
 
 	}
@@ -25,6 +23,12 @@ public class Node {
 		this.id = id;
 		this.coordinates=coordinate;
 	}
+
+
+	/*public String toString() {
+		return "id=" + id + "\naddress=" + address + "\nlatitude=" + latitude + "\nlongitude=" + longitude
+				+ "\nworkingState=" + workingState + "\nsensors=" + sensors;
+	}*/
 
 	public String getId() {
 		return id;
@@ -41,4 +45,9 @@ public class Node {
 	public void setCoordinates(Coordinate coordinates) {
 		this.coordinates = coordinates;
 	}
+
+	
+	
+	
+	
 }
