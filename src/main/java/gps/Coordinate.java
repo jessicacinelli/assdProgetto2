@@ -1,10 +1,20 @@
 package gps;
 
+import java.io.Serializable;
 
-public class Coordinate {
+import javax.xml.bind.annotation.XmlRootElement;
+
+
+
+@XmlRootElement
+
+public class Coordinate implements Serializable{
 	private double latitude; 
 	private double longitude;
 	
+	public Coordinate() {
+		
+	}
 	public Coordinate(double latitude, double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
