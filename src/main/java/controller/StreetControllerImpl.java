@@ -144,7 +144,7 @@ public class StreetControllerImpl implements StreetController{
 
 	@Override
 	public Object getShortestPath(int osmidSource, int osmidDestination, String type) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
