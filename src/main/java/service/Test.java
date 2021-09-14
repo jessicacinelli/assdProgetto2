@@ -12,7 +12,7 @@ public class Test {
 
 	public static void main(String[] args) throws MqttException, InterruptedException {
 		Client client=ClientBuilder.newClient();
-		WebTarget endpoint=client.target("http://assd-traffic-service-progetto2.router.default.svc.cluster.local/assdTrafficService/rest/");
+		WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
 		
 		TrafficService ts= new TrafficService(endpoint);
 

@@ -1,21 +1,26 @@
 package strada;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gps.Coordinate;
 
 
 @XmlRootElement
 
-public class Street implements Serializable
-{
-	private int linkid; 
-	private int fromPoint;
-	private int toPoint;
-	private double length; //link lenght [espressa in metri]
+public class Street implements Serializable{
+	private double linkId; 
+	private int from;
+	private int to;
+	private double lenght; //link lenght [espressa in metri]
 
 	private int speedlimit;
 	private String name;
@@ -23,66 +28,99 @@ public class Street implements Serializable
 	
 	private double ffs; // free flow speed [Km/h] (Velocit� media, dipendente dal traffico)
 
-	private ArrayList<Coordinate> c;
+	private List<Coordinate> coordinates;
 
+	 @JsonCreator
+	    public Street(
+	            @JsonProperty("linkId") final double linkId,
+	            @JsonProperty("from") final int from,
+	            @JsonProperty("to") final int to,
+	            @JsonProperty("lenght") final double lenght,
+	            @JsonProperty("speedlimit") final int speedlimit,
+	            @JsonProperty("name") final String name,
+	            @JsonProperty("weight") final double weight,
+	            @JsonProperty("fft") final double fft,
+	            @JsonProperty("coordinates") final List<Coordinate> coordinates
+	    ) {
+		 this.linkId = linkId;
+			this.from = from;
+			this.to = to;
+			this.lenght =lenght;
+			this.speedlimit = speedlimit;
+			this.name = name;
+			this.weight = weight;
+			this.ffs = ffs;
+			this.coordinates=coordinates;
+	    }
+
+	    public static Street parseStreetJson(String json) {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        try {
+	            return objectMapper.readValue(json, Street.class);
+	        } catch (IOException e) {
+	            throw new RuntimeException(e);
+	        }
+	    }
+	
+	
 	public Street() {}
 	
-	public Street(int linkid, int fromPoint, int toPoint, double length, int speedlimit, String name, double weight, double ffs) 
+	public Street(int linkid, int fromPoint, int toPoint, double lenght, int speedlimit, String name, double weight, double ffs) 
 	{
-		this.linkid = linkid;
-		this.fromPoint = fromPoint;
-		this.toPoint = toPoint;
-		this.length = length;
+		this.linkId = linkid;
+		this.from = fromPoint;
+		this.to = toPoint;
+		this.lenght = lenght;
 		this.speedlimit = speedlimit;
 		this.name = name;
 		this.weight = weight;
 		this.ffs = ffs;
-		this.c = new ArrayList<Coordinate>();
+		
 	}
 
-	public Street(int linkid, int fromPoint, int toPoint, double length, int speedlimit, String name, double weight, double ffs, ArrayList<Coordinate> c) 
+	public Street(int linkid, int fromPoint, int toPoint, double lenght, int speedlimit, String name, double weight, double ffs, List<Coordinate> coordinates) 
 	{
-		this.linkid = linkid;
-		this.fromPoint = fromPoint;
-		this.toPoint = toPoint;
-		this.length = length;
+		this.linkId = linkid;
+		this.from = fromPoint;
+		this.to = toPoint;
+		this.lenght = lenght;
 		this.speedlimit = speedlimit;
 		this.name = name;
 		this.weight = weight;
 		this.ffs = ffs;
-		this.c = c;
+		this.coordinates = coordinates;
 	}
 
-	public int getLinkid() {
-		return linkid;
+	public double getLinkid() {
+		return linkId;
 	}
 
 	public void setLinkid(int linkid) {
-		this.linkid = linkid;
+		this.linkId = linkid;
 	}
 
 	public int getFromPoint() {
-		return fromPoint;
+		return from;
 	}
 
 	public void setFromPoint(int fromPoint) {
-		this.fromPoint = fromPoint;
+		this.from = fromPoint;
 	}
 
 	public int getToPoint() {
-		return toPoint;
+		return to;
 	}
 
 	public void setToPoint(int toPoint) {
-		this.toPoint = toPoint;
+		this.to = toPoint;
 	}
 
-	public double getLength() {
-		return length;
+	public double getLenght() {
+		return lenght;
 	}
 
-	public void setLength(double length) {
-		this.length = length;
+	public void setLenght(double lenght) {
+		this.lenght = lenght;
 	}
 
 	public int getSpeedlimit() {
@@ -117,35 +155,38 @@ public class Street implements Serializable
 		this.ffs = ffs;
 	}
 
-	public ArrayList<Coordinate> getCoordinate() {
-		return c;
+	public List<Coordinate> getCoordinates() {
+		return coordinates;
 	}
 
-	public void setCoordinate(ArrayList<Coordinate> c) {
-		this.c = c;
+	public void setCoordinates(List<Coordinate> coordinates) {
+		this.coordinates = coordinates;
 	}
 	
-	public double Distance(long w )
+	public double Distance(double ffs, double w )
 	{
-		double dist = (ffs * 3.6)* w; //calcola la distanza percorsa 
+		double dist = (ffs / 3.6)* (double)w; //calcola la distanza percorsa in metri
+		//System.out.println(dist);
 		return dist;
 	}
 	
 	
 	@Override
 	public String toString() {
-		return "Street [linkid=" + linkid + ", fromPoint=" + fromPoint + ", toPoint=" + toPoint + ", length=" + length
-				+ ", speedlimit=" + speedlimit + ", name=" + name + ", weight=" + weight + ", ffs=" + ffs + ", c=" + c
+		return "Street [linkid=" + linkId + ", fromPoint=" + from + ", toPoint=" + to + ", lenght=" + lenght
+				+ ", speedlimit=" + speedlimit + ", name=" + name + ", weight=" + weight + ", ffs=" + ffs + ", c=" + coordinates
 				+ "]";
 	}
 
 	public Coordinate newPoint(double distance, double metripercorsi, Coordinate a, Coordinate b)
 	{
+		//System.out.println("DISTANCE:" + distance);
+	//	System.out.println("MP:" + metripercorsi);
 		//distance -> lunghezza del link
 		//metripercorsi -> metri effettivamente percorsi
 		double lat= (distance-metripercorsi)/distance * (b.getLatitude()-a.getLatitude());
 		double lon=metripercorsi/distance * (b.getLongitude()- a.getLongitude());
-		Coordinate point = new Coordinate(lat, lon);
+		Coordinate point = new  Coordinate(b.getLatitude()- lat, a.getLongitude() + lon);
 		
 		return point;
 	}
