@@ -13,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.simple.JSONObject;
 
+import application.Veicolo;
 import gps.Coordinate;
 
 
@@ -20,15 +21,15 @@ public class Application {
 
 	public static void main(String[] args) throws Exception{
 
-		Node node= new Node("10", new Coordinate(41.1597366993132, 14.50503059602507));
+		Veicolo v= new Veicolo("10", new Coordinate(41.1597366993132, 14.50503059602507));
 		while (true) {
 
 			String topic = "node"; 
-			String content = "{latitute: " + node.getCoordinates().getLatitude() + ",longitude: " + node.getCoordinates().getLongitude() +"}";
+			String content = "{latitute: " + v.getCoordinates().getLatitude() + ",longitude: " + v.getCoordinates().getLongitude() +"}";
 			JSONObject obj=new JSONObject();
-			obj.put("id",node.getId() ); 
-			obj.put("latitude",node.getCoordinates().getLatitude());    
-			obj.put("longitude",node.getCoordinates().getLongitude());    
+			obj.put("id",v.getId() ); 
+			obj.put("latitude",v.getCoordinates().getLatitude());    
+			obj.put("longitude",v.getCoordinates().getLongitude());    
 
 			String objString = obj.toString();
 			int qos = 2; 
@@ -50,8 +51,8 @@ public class Application {
 				//sampleClient.disconnect(); 
 				//	System.out.println("Disconnesso"); 
 				//System.exit(0);
-				Coordinate  c= new Coordinate(node.getCoordinates().getLatitude() + 0.1 , node.getCoordinates().getLongitude() +0.1);
-				node.setCoordinates(c);
+				Coordinate  c= new Coordinate(v.getCoordinates().getLatitude() + 0.1 , v.getCoordinates().getLongitude() +0.1);
+				v.setCoordinates(c);
 				int scaleFactor=1;long startTime = System.currentTimeMillis();
 				Thread.sleep(10000/scaleFactor);
 
