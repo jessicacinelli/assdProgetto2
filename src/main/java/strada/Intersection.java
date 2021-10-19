@@ -14,6 +14,7 @@ public class Intersection implements Serializable
 {
 	private int osmid; //Open Street Map ID
 	private Coordinate coordinate;
+	private double betweenness;
 	private ArrayList<Street> streets;
 	
 	
@@ -29,6 +30,15 @@ public class Intersection implements Serializable
 	{
 		this.osmid = osmid;
 		this.coordinate = coordinate;
+		this.streets = streets;
+	}
+	
+
+	public Intersection(int osmid, Coordinate coordinate, String description, ArrayList<Street> streets, double betweenness) {
+		super();
+		this.osmid = osmid;
+		this.coordinate = coordinate;
+		this.betweenness = betweenness;
 		this.streets = streets;
 	}
 
@@ -51,10 +61,22 @@ public class Intersection implements Serializable
 		this.streets = streets;
 	}
 	
-	@Override
-	public String toString() {
-		return "Intersection [osmid=" + osmid + ", coordinate=" + coordinate + ", streets=" + streets + "]";
+
+
+
+	public double getBetweenness() {
+		return betweenness;
 	}
+
+	public void setBetweenness(double betweenness) {
+		this.betweenness = betweenness;
+	}
+
+	@Override
+public String toString() {
+	return "Intersection [osmid=" + osmid + ", coordinate=" + coordinate + ", betweenness=" + betweenness + ", streets="
+			+ streets + "]";
+}
 
 	/* Questa funzione calcola la distanza tra due punti 
 	in linea retta date le coordinate in
