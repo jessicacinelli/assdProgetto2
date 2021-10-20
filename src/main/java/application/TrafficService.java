@@ -59,7 +59,7 @@ public class TrafficService {
 	}
 	
 	//GET /shortestPaths
-	public List getShortestPath(int source, int destination, String type) {
+	public synchronized List getShortestPath(int source, int destination, String type) {
 		WebTarget resource=endpoint.path("shortestPaths").queryParam("source", source).queryParam("destination", destination).queryParam("type", type);
 		//   List<Coordinate> coo= client.target("http://assd-traffic-service-progetto2.router.default.svc.cluster.local/assdTrafficService/rest/").path("shortestPaths").queryParam("source", 40233).queryParam("destination", 40236).queryParam("type", "Coordinate").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(new GenericType<List<Coordinate>>() {});
 		

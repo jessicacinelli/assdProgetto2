@@ -1,5 +1,23 @@
 package application;
 
+
+/*******************************************************************************
+ * Copyright (c) 2009, 2014 IBM Corp.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * and Eclipse Distribution License v1.0 which accompany this distribution. 
+ *
+ * The Eclipse Public License is available at 
+ *    https://www.eclipse.org/legal/epl-2.0
+ * and the Eclipse Distribution License is available at 
+ *   https://www.eclipse.org/org/documents/edl-v10.php
+ *
+ * Contributors:
+ *    Dave Locke - initial API and implementation and/or initial documentation
+ */
+
+
 import java.io.IOException;
 import java.sql.Timestamp;
 
@@ -12,6 +30,29 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.json.simple.JSONObject;
 
+
+import gps.Coordinate;
+
+/**
+ * A sample application that demonstrates how to use the Paho MQTT v3.1 Client blocking API.
+ *
+ * It can be run from the command line in one of two modes:
+ *  - as a publisher, sending a single message to a topic on the server
+ *  - as a subscriber, listening for messages from the server
+ *
+ *  There are three versions of the sample that implement the same features
+ *  but do so using using different programming styles:
+ *  <ol>
+ *  <li>Sample (this one) which uses the API which blocks until the operation completes</li>
+ *  <li>SampleAsyncWait shows how to use the asynchronous API with waiters that block until
+ *  an action completes</li>
+ *  <li>SampleAsyncCallBack shows how to use the asynchronous API where events are
+ *  used to notify the application when an action completes<li>
+ *  </ol>
+ *
+ *  If the application is run with the -h parameter then info is displayed that
+ *  describes all of the options / parameters.
+ */
 public class Sample implements MqttCallback {
 
 	/**
@@ -20,132 +61,15 @@ public class Sample implements MqttCallback {
 	 * This method handles parsing of the arguments specified on the
 	 * command-line before performing the specified action.
 	 */
-/*	public static void main(String[] args) {
-
-		// Default settings:
-		boolean quietMode 	= false;
-		String action 		= "publish";
-		String topic 		= "";
-		String message 		= "Message from blocking Paho MQTTv3 Java client sample";
-		int qos 			= 2;
-		String broker 		= "127.0.0.1";
-		int port 			= 1883;
-		String clientId 	= null;
-		String subTopic		= "Sample/#";
-		String pubTopic 	= "Sample/Java/v3";
-		boolean cleanSession = true;			// Non durable subscriptions
-		boolean ssl = false;
-		String password = null;
-		String userName = null;
-		// Parse the arguments -
-	/*	for (int i=0; i<args.length; i++) {
-			// Check this is a valid argument
-			if (args[i].length() == 2 && args[i].startsWith("-")) {
-				char arg = args[i].charAt(1);
-				// Handle arguments that take no-value
-				switch(arg) {
-					case 'h': case '?':	printHelp(); return;
-					case 'q': quietMode = true;	continue;
-				}
-
-				// Now handle the arguments that take a value and
-				// ensure one is specified
-				if (i == args.length -1 || args[i+1].charAt(0) == '-') {
-					System.out.println("Missing value for argument: "+args[i]);
-					printHelp();
-					return;
-				}
-				switch(arg) {
-					case 'a': action = args[++i];                 break;
-					case 't': topic = args[++i];                  break;
-					case 'm': message = args[++i];                break;
-					case 's': qos = Integer.parseInt(args[++i]);  break;
-					case 'b': broker = args[++i];                 break;
-					case 'p': port = Integer.parseInt(args[++i]); break;
-					case 'i': clientId = args[++i];				  break;
-					case 'c': cleanSession = Boolean.valueOf(args[++i]).booleanValue();  break;
-					case 'k': System.getProperties().put("javax.net.ssl.keyStore", args[++i]); break;
-					case 'w': System.getProperties().put("javax.net.ssl.keyStorePassword", args[++i]); break;
-					case 'r': System.getProperties().put("javax.net.ssl.trustStore", args[++i]); break;
-					case 'v': ssl = Boolean.valueOf(args[++i]).booleanValue(); break;
-					case 'u': userName = args[++i];               break;
-					case 'z': password = args[++i];               break;
-					default:
-						System.out.println("Unrecognised argument: "+args[i]);
-						printHelp();
-						return;
-				}
-			} else {
-				System.out.println("Unrecognised argument: "+args[i]);
-				printHelp();
-				return;
-			}
-		}
-*/
-		// Validate the provided arguments
-		/*if (!action.equals("publish") && !action.equals("subscribe")) {
-			System.out.println("Invalid action: "+action);
-			printHelp();
-			return;
-		}*/
-		
-	/*	if (qos < 0 || qos > 2) {
-			System.out.println("Invalid QoS: "+qos);
-	//		printHelp();
-			return;
-		}
-		if (topic.equals("")) {
-			// Set the default topic according to the specified action
-			if (action.equals("publish")) {
-				topic = pubTopic;
-			} else {
-				topic = subTopic;
-			}
-		}
-
-		String protocol = "tcp://";
-
-    if (ssl) {
-      protocol = "ssl://";
-    }
-
-    String url = protocol + broker + ":" + port;
-
-		if (clientId == null || clientId.equals("")) {
-			clientId = "SampleJavaV3_"+action;
-		}
-
-		// With a valid set of arguments, the real work of
-		// driving the client API can begin
-		try {
-			// Create an instance of this class
-			Sample2 sampleClient = new Sample2(url, clientId, cleanSession, quietMode);
-
-			// Perform the requested action
-			if (action.equals("publish")) {
-				sampleClient.publish(topic,qos,message.getBytes());
-			} else if (action.equals("subscribe")) {
-				sampleClient.subscribe(topic,qos);
-			}
-		} catch(MqttException me) {
-			// Display full details of any exception that occurs
-			System.out.println("reason "+me.getReasonCode());
-			System.out.println("msg "+me.getMessage());
-			System.out.println("loc "+me.getLocalizedMessage());
-			System.out.println("cause "+me.getCause());
-			System.out.println("excep "+me);
-			me.printStackTrace();
-		}
-	}
-*/
+	
 	// Private instance variables
 	private MqttClient 			client;
 	private String 				brokerUrl;
 	private boolean 			quietMode;
 	private MqttConnectOptions 	conOpt;
 	private boolean 			clean;
-//	private String password;
-//	private String userName;
+	private String password;
+	private String userName;
 
 	/**
 	 * Constructs an instance of the sample client wrapper
@@ -158,44 +82,55 @@ public class Sample implements MqttCallback {
 	 * @throws MqttException
 	 */
     public Sample(String brokerUrl, String clientId, boolean cleanSession, boolean quietMode ) throws MqttException {
+    
     	this.brokerUrl = brokerUrl;
     	this.quietMode = quietMode;
     	this.clean 	   = cleanSession;
- //   	this.password = password;
- //   	this.userName = userName;
+    	this.password = "licit";
+    	this.userName = "licit";
     	//This sample stores in a temporary directory... where messages temporarily
     	// stored until the message has been delivered to the server.
     	//..a real application ought to store them somewhere
     	// where they are not likely to get deleted or tampered with
-    	String tmpDir = System.getProperty("java.io.tmpdir");
-    	MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
+    //	String tmpDir = System.getProperty("java.io.tmpdir");
+    	//MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
 
     	try {
     		// Construct the connection options object that contains connection parameters
     		// such as cleanSession and LWT
 	    	conOpt = new MqttConnectOptions();
 	    	conOpt.setCleanSession(clean);
-//	    	if(password != null ) {
-//	    	  conOpt.setPassword(this.password.toCharArray());
-//	    	}
-//	    	if(userName != null) {
-//	    	  conOpt.setUserName(this.userName);
-//	    	}
+	    	if(password != null ) {
+	    	  conOpt.setPassword(this.password.toCharArray());
+	    	}
+	    	if(userName != null) {
+	    	  conOpt.setUserName(this.userName);
+	    	}
 
     		// Construct an MQTT blocking mode client
-			client = new MqttClient(this.brokerUrl,clientId, dataStore);
-
+		
+	    	client = new MqttClient(this.brokerUrl,clientId);
+			
+			//	if(new MqttClient(this.brokerUrl,clientId, dataStore).isConnected()) {
+					
+				
+	    	
 			// Set this wrapper as the callback handler
-	    	client.setCallback(this);
+	    	//client.setCallback(this);
 
 		} catch (MqttException e) {
 			e.printStackTrace();
 			log("Unable to set up client: "+e.toString());
 			System.exit(1);
 		}
+    	
+    	log("Connecting to "+brokerUrl + " with client ID "+client.getClientId());
+    	client.connect(conOpt);
+    	log("Connected");
     }
 
-    /**
+  
+	/**
      * Publish / send a message to an MQTT server
      * @param topicName the name of the topic to publish to
      * @param qos the quality of service to delivery the message at (0,1,2)
@@ -205,9 +140,7 @@ public class Sample implements MqttCallback {
     public void publish(String topicName, int qos, byte[] payload) throws MqttException {
 
     	// Connect to the MQTT server
-    	log("Connecting to "+brokerUrl + " with client ID "+client.getClientId());
-    	client.connect(conOpt);
-    	log("Connected");
+    
 
     	String time = new Timestamp(System.currentTimeMillis()).toString();
     	log("Publishing at: "+time+ " to topic \""+topicName+"\" qos "+qos);
@@ -222,8 +155,7 @@ public class Sample implements MqttCallback {
     	client.publish(topicName, message);
     	System.out.println(message);
     	// Disconnect the client
-    	client.disconnect();
-    	log("Disconnected");
+    
     }
 
     /**
@@ -267,9 +199,9 @@ public class Sample implements MqttCallback {
      * @param message the message to log
      */
     private void log(String message) {
-    	if (!quietMode) {
+    	//if (!quietMode) {
     		System.out.println(message);
-    	}
+    	//}
     }
 
 	/****************************************************************/
@@ -324,7 +256,8 @@ public class Sample implements MqttCallback {
 
 	/****************************************************************/
 	/* End of MqttCallback methods                                  */
-	/****************************************************************/
+	/**
+	 * @throws MqttException **************************************************************/
 /*
 	   static void printHelp() {
 	      System.out.println(
@@ -359,14 +292,19 @@ public class Sample implements MqttCallback {
 	          );
     }*/
 	
-	public JSONObject createJSONObject(Veicolo veicolo) {
+	public void disconnect() throws MqttException {
+		client.disconnect();
+		log("Disconnected");
+	}
+	public JSONObject createJSONObject(String id, Coordinate coordinate) {
 		JSONObject obj=new JSONObject();
-		obj.put("id",veicolo.getId() ); 
-		obj.put("latitude",veicolo.getCoordinates().getLatitude());    
-		obj.put("longitude",veicolo.getCoordinates().getLongitude());    
+		obj.put("id",id ); 
+		obj.put("latitude",coordinate.getLatitude());    
+		obj.put("longitude",coordinate.getLongitude());    
 		
-	//	System.out.println("JSON" + obj.toJSONString());
+		//System.out.println("JSON" + obj.toJSONString());
 		return obj;
 	}
 
+	
 }
