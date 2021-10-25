@@ -19,12 +19,12 @@ public class TrafficService {
 	}
 
 
-	public TrafficService(WebTarget endpoint) {
+	public  TrafficService(WebTarget endpoint) {
 		this.endpoint = endpoint;
 	}
 
 	//GET /intersections/nearest
-	public Intersection getNearest(double latitude, double longitude) {
+	public  Intersection getNearest(double latitude, double longitude) {
 
 		WebTarget resource= endpoint.path("intersections/nearest").queryParam("latitude", latitude).queryParam("longitude", longitude);	
 		Intersection i = resource.request().accept("application/json").get(Intersection.class);
@@ -33,7 +33,7 @@ public class TrafficService {
 	}
 
 	//GET intersections/{osmid}
-	public Intersection getIntersection(int osmid) {
+	public  Intersection getIntersection(int osmid) {
 		WebTarget resource=endpoint.path("intersections/"+ osmid);
 		Intersection i = resource.request().accept("application/json").get(Intersection.class);
 		
@@ -41,7 +41,7 @@ public class TrafficService {
 	}
 
 	//GET /streets/{linkId}
-	public Street getStreet(String linkId) {
+	public  Street getStreet(String linkId) {
 		resource=endpoint.path("streets/"+linkId);
 	Street s = resource.request().accept("application/json").get(Street.class);
 
@@ -49,7 +49,7 @@ public class TrafficService {
 	}
 	
 	//GET ​/streets
-	public Street getStreet(int osmidStart, int osmidDest) {
+	public  Street getStreet(int osmidStart, int osmidDest) {
 		resource=endpoint.path("streets").queryParam("osmidStart", osmidStart).queryParam("osmidDest", osmidDest);
 	String st = resource.request().accept("application/json").get(String.class);
 	Street street = Street.parseStreetJson(st);
@@ -59,7 +59,7 @@ public class TrafficService {
 	}
 	
 	//GET /shortestPaths
-	public List getShortestPath(int source, int destination, String type) {
+	public synchronized List getShortestPath(int source, int destination, String type) {
 		WebTarget resource=endpoint.path("shortestPaths").queryParam("source", source).queryParam("destination", destination).queryParam("type", type);
 		//   List<Coordinate> coo= client.target("http://assd-traffic-service-progetto2.router.default.svc.cluster.local/assdTrafficService/rest/").path("shortestPaths").queryParam("source", 40233).queryParam("destination", 40236).queryParam("type", "Coordinate").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(new GenericType<List<Coordinate>>() {});
 		
