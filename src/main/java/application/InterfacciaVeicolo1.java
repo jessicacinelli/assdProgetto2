@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,11 +43,15 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
 	private JTextField textField;
-	private JTextField nVeicoli;
-	private ArrayList<VeicoloThread> veicoli;
+	private JTextField latP;
+	private JTextField lonP;
+	private JTextField cP;
+	private JTextField cD;
+	
 	private Thread t;
 	private Sample sample;
-
+	private JTextField idVeicolo;
+	private HashMap<String, VeicoloThread> veicoli;
 	/**
 	 * Launch the application.
 	 */
@@ -67,7 +72,7 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public InterfacciaVeicolo1() {
-
+		veicoli= new HashMap<>();
 		this.setResizable(false);
 		this.setBounds(100, 100, 450, 450);
 		this.setTitle("");
@@ -88,29 +93,24 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 		});
 		this.getContentPane().setLayout(null);
 
-		/* Logo */
-		JLabel lbl_logo = new JLabel();
-		lbl_logo.setLocation(110, 10);
-		lbl_logo.setSize(231, 80);
 	
-		this.getContentPane().add(lbl_logo);
-
-		/* BENVENUTO */
-		JLabel lbl_benvenuto = new JLabel("MANNAGGIA A EUGENIO.!");
-		lbl_benvenuto.setBounds(186, 102, 214, 13);
-		this.getContentPane().add(lbl_benvenuto);
-
 		/*Inserire il numero di veicoli da monitorare:*/
-		JLabel lbl_insert = new JLabel("Inserire il numero di veicoli da monitorare:");
-		lbl_insert.setBounds(114, 125, 238, 13);
+		JLabel lbl_insert = new JLabel("Inserire le coordinate di partenza");
+		lbl_insert.setBounds(110, 125, 238, 13);
 		this.getContentPane().add(lbl_insert);
 
-		nVeicoli = new JTextField();
-		nVeicoli.setBounds(110, 163, 242, 30);
-		nVeicoli.setColumns(32);
-		this.getContentPane().add(nVeicoli);
+		cP = new JTextField();
+		cP.setBounds(110, 205, 242, 30);
+		cP.setColumns(32);
+		
+		cD = new JTextField();
+		cD.setBounds(110, 148, 242, 30);
+		cD.setColumns(32);
+		
+		this.getContentPane().add(cP);
+		this.getContentPane().add(cD);
 
-
+		
 
 		JSeparator separator = new JSeparator();
 		separator.setBounds(123, 281, 200, 2);
@@ -120,26 +120,48 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 		btn_signup.setBounds(173, 305, 100, 25);
 		btn_signup.addActionListener(this);
 		this.getContentPane().add(btn_signup);
-		btn_signup.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e)
-			{
-				dispose();
-			}
-		});
+		btn_signup.setActionCommand("Conferma");
+		
+		JLabel lbl_insert_1 = new JLabel("Inserire le coordinate di destinazione");
+		lbl_insert_1.setBounds(110, 188, 238, 13);
+		getContentPane().add(lbl_insert_1);
+		
+		JLabel lbl_insert_2 = new JLabel("Inserire l'identificativo del veicolo");
+		lbl_insert_2.setBounds(106, 62, 238, 13);
+		getContentPane().add(lbl_insert_2);
+		
+		idVeicolo = new JTextField();
+		idVeicolo.setColumns(32);
+		idVeicolo.setBounds(106, 85, 242, 30);
+		getContentPane().add(idVeicolo);
+	
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
-
-		int n = Integer.parseInt(nVeicoli.getText());
+		String cmd = e.getActionCommand();
+		switch (cmd) {
+		case "Conferma":
 		
-
+		String id = idVeicolo.getText();
+		if(veicoli.containsKey(id)) {
+			JOptionPane.showMessageDialog(this, "Monitoraggio del veicolo " + id +" già in corso.");
+			break;
+		}
+		String p = (cP.getText());
+		String d =(cD.getText());
+		String st = "";
+		this.dispose();
+		Home h= new Home();
+		String partenza[] = p.split(",");
+		String destinazione[] = d.split(",");
+		
+		
 		Client client=ClientBuilder.newClient();
 		WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
 		TrafficService ts= null;
 		try {
-			sample = new Sample("tcp://137.121.170.248:30352", "clientId", true, true );
+			sample = new Sample("tcp://137.121.170.248:30352", id, true, true );
 		} catch (MqttException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -147,15 +169,19 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 
 		int count = Thread.activeCount();
 		TrafficService traffic= new TrafficService(endpoint);
-		for(int i=0; i<n; i++) {
-			
+		Coordinate sorg= new Coordinate (Double.parseDouble(partenza[0]),Double.parseDouble(partenza[1]));
+		Coordinate dest = new Coordinate (Double.parseDouble(destinazione[0]),Double.parseDouble(destinazione[1]));
+		System.out.println(sorg.toString());
+		System.out.println(dest.toString());
 			try {
-				new Thread(new VeicoloThread(""+i, new Coordinate (45.6927322,4.803549) , new Coordinate(45.6927746,  4.8033378), sample, traffic )).start();
+				VeicoloThread v = new VeicoloThread(id,  sorg,dest , sample, traffic );
+				veicoli.put(v.getIdVeicolo(), v);
+				new Thread(new VeicoloThread(id,  sorg,dest , sample, traffic )).start();
 			} catch (MqttException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
+		
 
 		
 
@@ -170,5 +196,7 @@ public class InterfacciaVeicolo1 extends JFrame implements ActionListener{
 			}
 
 		}
-		System.exit(1);
-	}}
+		}
+		
+	}	
+}
