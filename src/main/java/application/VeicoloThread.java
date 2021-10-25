@@ -1,6 +1,11 @@
 package application;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +61,19 @@ public class VeicoloThread extends Thread {
 	}
 
 	public  void run() {
-
+		File fos = null;
+		fos = new File("Veicolo" + id + ".txt");
+		if(fos.exists())
+			fos.delete();
+		PrintStream ps = null;
+		try {
+			ps = new PrintStream(fos);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		//Client client=ClientBuilder.newClient();
 		//WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
 
@@ -64,11 +81,11 @@ public class VeicoloThread extends Thread {
 
 		Coordinate c= new Coordinate();
 		Intersection s = ts.getNearest(sorgente.getLatitude(), sorgente.getLongitude());
-
+		System.out.println(s.toString());
 		Intersection d = ts.getNearest(destinazione.getLatitude(), destinazione.getLongitude());
-
+		System.out.println(d.toString());
 		List<Intersection> intersections = new ArrayList<Intersection> (ts.getShortestPath(s.getOsmid(), d.getOsmid(), "Intersection"));
-
+		System.out.println(intersections.toString());
 		int getStart =0;
 		int getDest=1;
 		//int start = intersections.get(getStart).getOsmid();
@@ -102,9 +119,12 @@ public class VeicoloThread extends Thread {
 			//System.out.println("DISTANZA " + dist);
 			c= (st.newPoint(st.getLenght(), dist, Intstart.getCoordinate(), Intdest.getCoordinate()));
 			controllo++;
-			System.out.println(c.toString());
+			//System.out.println(c.toString());
 			JSONObject msg= sample.createJSONObject(id, c);
-
+			
+			ps.println(msg);
+			
+			
 			try {
 				sample.publish(topic, qos, msg.toJSONString().getBytes());
 			} catch (MqttException e) {
@@ -133,15 +153,68 @@ public class VeicoloThread extends Thread {
 		}
 	}
 	
-	public synchronized void execution(Coordinate c, TrafficService ts) {
+/*	public synchronized void execution(Coordinate c, TrafficService ts) {
 		
-	}
+	}*/
 
 	public VeicoloThread(String id, Sample sample) {
 		//	this.sample=sample;
 		this.id=id;
 		//String clientId = "client" + id;
 		topic=topic.replace("+", id);
+	}
+	
+	
+	public String getIdVeicolo() {
+		return id;
+	}
+		
+	public void setId(String id) {
+	
+		this.id = id;
+	}
+
+	public Coordinate getSorgente() {
+		return sorgente;
+	}
+	public void setSorgente(Coordinate sorgente) {
+		this.sorgente = sorgente;
+	}
+	public Coordinate getDestinazione() {
+		return destinazione;
+	}
+	public void setDestinazione(Coordinate destinazione) {
+		this.destinazione = destinazione;
+	}
+	public Intersection getPercorso() {
+		return percorso;
+	}
+	public void setPercorso(Intersection percorso) {
+		this.percorso = percorso;
+	}
+	public String getTopic() {
+		return topic;
+	}
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+	public TrafficService getTs() {
+		return ts;
+	}
+	public void setTs(TrafficService ts) {
+		this.ts = ts;
+	}
+	public Sample getSample() {
+		return sample;
+	}
+	public void setSample(Sample sample) {
+		this.sample = sample;
+	}
+	public int getQos() {
+		return qos;
+	}
+	public void setQos(int qos) {
+		this.qos = qos;
 	}
 
 
