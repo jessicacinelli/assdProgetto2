@@ -21,6 +21,7 @@ package application;
 import java.io.IOException;
 import java.sql.Timestamp;
 
+import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -63,7 +64,7 @@ public class Sample implements MqttCallback {
 	 */
 	
 	// Private instance variables
-	private MqttClient 			client;
+	private IMqttClient 			client;
 	private String 				brokerUrl;
 	private boolean 			quietMode;
 	private MqttConnectOptions 	conOpt;
@@ -109,7 +110,13 @@ public class Sample implements MqttCallback {
 
     		// Construct an MQTT blocking mode client
 		
-	    	client = new MqttClient(this.brokerUrl,clientId);
+	    	try {
+	    		client =new MqttClient(this.brokerUrl,clientId);
+	    	}
+	    	catch (Exception e) {
+	    		client = new MqttClient(this.brokerUrl,MqttClient.generateClientId());
+			}
+	    
 			
 			//	if(new MqttClient(this.brokerUrl,clientId, dataStore).isConnected()) {
 					
@@ -152,6 +159,7 @@ public class Sample implements MqttCallback {
     	// Send the message to the server, control is not returned until
     	// it has been delivered to the server meeting the specified
     	// quality of service.
+    	
     	client.publish(topicName, message);
     	System.out.println(message);
     	// Disconnect the client
@@ -204,10 +212,6 @@ public class Sample implements MqttCallback {
     	//}
     }
 
-	/****************************************************************/
-	/* Methods to implement the MqttCallback interface              */
-	/****************************************************************/
-
     /**
      * @see MqttCallback#connectionLost(Throwable)
      */
@@ -255,9 +259,9 @@ public class Sample implements MqttCallback {
 	}
 
 	/****************************************************************/
-	/* End of MqttCallback methods                                  */
+
 	/**
-	 * @throws MqttException **************************************************************/
+	  @throws MqttException *************************************************************/
 /*
 	   static void printHelp() {
 	      System.out.println(
@@ -296,6 +300,7 @@ public class Sample implements MqttCallback {
 		client.disconnect();
 		log("Disconnected");
 	}
+	
 	public JSONObject createJSONObject(String id, Coordinate coordinate) {
 		JSONObject obj=new JSONObject();
 		obj.put("id",id ); 
