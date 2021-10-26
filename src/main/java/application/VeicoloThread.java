@@ -151,6 +151,13 @@ public class VeicoloThread extends Thread {
 				controllo=1;
 			}
 		}
+		
+		try {
+			sample.disconnect();
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 /*	public synchronized void execution(Coordinate c, TrafficService ts) {
