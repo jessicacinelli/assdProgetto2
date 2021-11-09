@@ -18,7 +18,6 @@ public class TrafficService {
 
 	}
 
-
 	public  TrafficService(WebTarget endpoint) {
 		this.endpoint = endpoint;
 	}
