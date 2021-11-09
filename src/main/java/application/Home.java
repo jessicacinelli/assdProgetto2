@@ -23,8 +23,10 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import entity.MQTTPublisher;
 import gps.Coordinate;
 
 public class Home extends JFrame  implements ActionListener {
@@ -64,13 +66,13 @@ public class Home extends JFrame  implements ActionListener {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e); 
-				JOptionPane.showConfirmDialog(null,"Are sure to close!");
-				Thread.currentThread().interrupt();
-
-
-				System.exit(0);
+				int conf= JOptionPane.showConfirmDialog(null,"Conferma", null, JOptionPane.YES_NO_CANCEL_OPTION);
+				if(conf==0)
+				exit();
 
 			}
+
+			
 		});
 		this.getContentPane().setLayout(null);
 
@@ -103,17 +105,26 @@ public class Home extends JFrame  implements ActionListener {
 		String cmd = e.getActionCommand();
 		switch (cmd) {
 		case "Monitora":
-			InterfacciaVeicolo1 i = new InterfacciaVeicolo1();
-		
+			InterfaceCoordinates i = new InterfaceCoordinates();
 			break;
+			
 		case "Esci": 
-			this.dispose();
-			System.exit(0);
+			exit();
+			
+		
+	}
+	}
+	public void exit() {
+		try {
+			MQTTPublisher.disconnectClients();
+			
+		} catch (MqttException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
-
-
+			this.dispose();
+		System.exit(0);
+	}
 		
-		
-	}	
-}
+	}
