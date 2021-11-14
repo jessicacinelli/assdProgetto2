@@ -34,18 +34,7 @@ public class SensorNode extends Thread {
 
 	int qos=2;
 
-	/**public VeicoloThread() {
 
-  }*/
-
-	public SensorNode (String id, Coordinate source, Coordinate destination, MQTTPublisher mqttPublisher) {
-		this.id=id;
-		this.source=source;
-		this.destination=destination;
-		this.mqttPublisher=mqttPublisher;
-		topic=topic.replace("+", id);
-
-	}
 	public SensorNode (String id, Coordinate source, Coordinate destination, MQTTPublisher mqttPublisher ,TrafficService ts) throws MqttException  {
 		this.id=id;
 		this.source=source;
@@ -53,12 +42,9 @@ public class SensorNode extends Thread {
 		this.mqttPublisher=mqttPublisher;
 		topic=topic.replace("+", id);
 		this.ts= ts;
-		/*Client client=ClientBuilder.newClient();
-		WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
-
-	 ts = new TrafficService(endpoint);*/
 	}
 
+	
 	public  void run() {
 		File fos = null;
 		fos = new File("Veicolo" + id + ".txt");
@@ -99,16 +85,26 @@ public class SensorNode extends Thread {
 		String yV = "YV = [";
 		String xP = "XP = [";
 		String yP = "YP = [";
-		//Client client=ClientBuilder.newClient();
-		//WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
-
-		//TrafficService ts = new TrafficService(endpoint);
-
+		
 		Coordinate c= new Coordinate();
 		Intersection s = ts.getNearest(source.getLatitude(), source.getLongitude());
-		System.out.println(s.toString());
+		
+		try {
+			mqttPublisher.publish(topic + "/source", qos, (s.getOsmid()+"").getBytes());
+		} catch (MqttException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		Intersection d = ts.getNearest(destination.getLatitude(), destination.getLongitude());
-		System.out.println(d.toString());
+		
+		try {
+			mqttPublisher.publish(topic + "/destination", qos, (d.getOsmid()+"").getBytes());
+		} catch (MqttException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		List<Intersection> intersections = new ArrayList<Intersection> (ts.getShortestPath(s.getOsmid(), d.getOsmid(), "Intersection"));
 		//System.out.println(intersections.toString());
 		int getStart =0;
@@ -143,12 +139,12 @@ public class SensorNode extends Thread {
 			dist = st.Distance(st.getFfs(),seconds);
 
 			//System.out.println("DISTANZA " + dist);
-			c= (st.newPoint(st.getLenght(), dist, Intstart.getCoordinate(), Intdest.getCoordinate()));
+			c= (newPoint(st.getLenght(), dist, Intstart.getCoordinate(), Intdest.getCoordinate()));
 			xV=xV.concat(" " + c.getLatitude());
 			yV=yV.concat( " " + c.getLongitude());
 			count++;
 			//System.out.println(c.toString());
-			JSONObject msg= mqttPublisher.createJSONObject(id, c);
+			JSONObject msg= createJSONObject(id, c);
 			
 			ps.println(msg);
 			
@@ -200,25 +196,31 @@ public class SensorNode extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
-/*	public synchronized void execution(Coordinate c, TrafficService ts) {
 		
-	}*/
 
-	public SensorNode(String id, MQTTPublisher mqttPublisher) {
-		//	this.mqttPublisher=mqttPublisher;
-		this.id=id;
-		//String clientId = "client" + id;
-		topic=topic.replace("+", id);
+	public Coordinate newPoint(double distance, double metripercorsi, Coordinate a, Coordinate b)
+	{
+		double lat= (distance-metripercorsi)/distance * (b.getLatitude()-a.getLatitude());
+		double lon=metripercorsi/distance * (b.getLongitude()- a.getLongitude());
+		Coordinate point = new  Coordinate(b.getLatitude()- lat, a.getLongitude() + lon);
+		
+		return point;
 	}
-	
-	
+	public JSONObject createJSONObject(String id, Coordinate c) {
+		JSONObject obj=new JSONObject();
+		obj.put("id",id ); 
+		obj.put("latitude",c.getLatitude());    
+		obj.put("longitude",c.getLongitude());    
+		return obj;
+	}
+
+
 	public String getIdVeicolo() {
 		return id;
 	}
-		
+
 	public void setId(String id) {
-	
+
 		this.id = id;
 	}
 

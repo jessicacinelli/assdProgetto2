@@ -65,19 +65,7 @@ public class InterfaceCoordinates extends JFrame implements ActionListener{
 		// creo la GUI nell'EDT
 		SwingUtilities.invokeLater(init);
 	}
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InterfacciaVeicolo1 frame = new InterfacciaVeicolo1();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	 */
+	
 	/**
 	 * Create the frame.
 	 */
@@ -88,27 +76,11 @@ public class InterfaceCoordinates extends JFrame implements ActionListener{
 		this.setTitle("");
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		/*this.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosing(WindowEvent e) {
-				if(t!=null) {
-					t.interrupt();
-				}
-
-				super.windowClosing(e); 
-				JOptionPane.showConfirmDialog(null,"Are sure to close!");
-				ArrayList<Thread> threads = new ArrayList<Thread>();
-
-
-				System.exit(1);
-
-			}
-		});*/
+		
 		this.getContentPane().setLayout(null);
 
 
-		/*Inserire il numero di veicoli da monitorare:*/
+		/*Inserirei dati del veicolo*/
 		JLabel lbl_insert = new JLabel("Inserire le coordinate di partenza");
 		lbl_insert.setBounds(110, 125, 238, 13);
 		this.getContentPane().add(lbl_insert);
@@ -122,20 +94,17 @@ public class InterfaceCoordinates extends JFrame implements ActionListener{
 		cD.setColumns(32);
 
 		this.getContentPane().add(cP);
-		this.getContentPane().add(cD)
-		;
-
-
+		this.getContentPane().add(cD);
 
 		JSeparator separator = new JSeparator();
 		separator.setBounds(123, 281, 200, 2);
 		this.getContentPane().add(separator);
 
-		JButton btn_signup = new JButton("Conferma");
-		btn_signup.setBounds(173, 305, 100, 25);
-		btn_signup.addActionListener(this);
-		this.getContentPane().add(btn_signup);
-		btn_signup.setActionCommand("Conferma");
+		JButton btn_conferma = new JButton("Conferma");
+		btn_conferma.setBounds(173, 305, 100, 25);
+		btn_conferma.addActionListener(this);
+		this.getContentPane().add(btn_conferma);
+		btn_conferma.setActionCommand("Conferma");
 
 		JLabel lbl_insert_1 = new JLabel("Inserire le coordinate di destinazione");
 		lbl_insert_1.setBounds(110, 188, 238, 13);
