@@ -119,7 +119,7 @@ public class Home extends JFrame  implements ActionListener {
 			MQTTPublisher.disconnectClients();
 			
 		} catch (MqttException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		

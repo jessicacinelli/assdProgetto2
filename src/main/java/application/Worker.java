@@ -35,14 +35,11 @@ public class Worker extends SwingWorker<String, Void> {
 		if (!isCancelled()) {
 			String partenza[] = p.split(",");
 			String destinazione[] = d.split(",");
-			//Client client=ClientBuilder.newClient();
-			//WebTarget endpoint=client.target("http://assd-traffic-service-gruppo2.router.default.svc.cluster.local/assdTrafficService/rest/");
 			TrafficService ts= null;
 			try {
 				mqttPublisher = new MQTTPublisher( id );
 				mqttPublisher.setClients(mqttPublisher.getClient());
 			} catch (MqttException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
@@ -58,24 +55,9 @@ public class Worker extends SwingWorker<String, Void> {
 					t.start();
 					
 				} catch (MqttException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
-
-
-
-
-			boolean flag = true;
-			while(flag) {
-				int count1 = Thread.activeCount();
-
-				if(count1 == count) {
-					flag=false;
-
-				}
-			}
-			return "" ;
+				return "" ;
 		} else {
 			return "";
 		}

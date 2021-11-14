@@ -178,16 +178,5 @@ public class Street implements Serializable{
 				+ "]";
 	}
 
-	public Coordinate newPoint(double distance, double metripercorsi, Coordinate a, Coordinate b)
-	{
-		//System.out.println("DISTANCE:" + distance);
-	//	System.out.println("MP:" + metripercorsi);
-		//distance -> lunghezza del link
-		//metripercorsi -> metri effettivamente percorsi
-		double lat= (distance-metripercorsi)/distance * (b.getLatitude()-a.getLatitude());
-		double lon=metripercorsi/distance * (b.getLongitude()- a.getLongitude());
-		Coordinate point = new  Coordinate(b.getLatitude()- lat, a.getLongitude() + lon);
-		
-		return point;
-	}
+	
 }
