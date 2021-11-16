@@ -3,7 +3,7 @@ package entity;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -13,10 +13,9 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.json.simple.JSONObject;
 
-import gps.Coordinate;
+
+
 
 public class MQTTPublisher implements MqttCallback {
 

@@ -1,11 +1,8 @@
 package application;
 
 
-import java.util.concurrent.ExecutionException;
+
 import javax.swing.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
