@@ -30,7 +30,7 @@ public class SensorNode extends Thread {
 	private String topic = "node/+/coordinates"; 
 	private TrafficService ts;
 	private MQTTPublisher mqttPublisher;
-	private static final double PERIOD= 200;
+	private static final long PERIOD= 200;
 
 	int qos=2;
 

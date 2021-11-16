@@ -13,8 +13,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-import org.apache.catalina.Manager;
-import org.eclipse.paho.client.mqttv3.MqttException;
+
+
 
 import entity.MQTTPublisher;
 import entity.SensorNode;
