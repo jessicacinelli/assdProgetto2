@@ -1,56 +1,27 @@
 package application;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.border.EmptyBorder;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-
-import org.apache.catalina.Manager;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 import entity.MQTTPublisher;
-import entity.SensorNode;
-import gps.Coordinate;
 
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.GroupLayout.Alignment;
 
 
 public class InterfaceCoordinates extends JFrame implements ActionListener{
 
-	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField latP;
-	private JTextField lonP;
 	private JTextField cP;
 	private JTextField cD;
-	private ArrayList<SensorNode> veicoli;
-	private MQTTPublisher sample;
+
+
 	private JTextField idVeicolo;
-	private Thread t; 
 	private Worker worker;
 	/**
 	 * Launch the application.
